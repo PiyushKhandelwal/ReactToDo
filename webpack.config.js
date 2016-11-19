@@ -5,6 +5,10 @@ module.exports = {
 		filename: "./public/bundle.js"
 	},
 	resolve: {
+		root: __dirname,
+		alias :{
+			
+		}
 		extensions : ['','.js','.jsx']
 	},
 	module:{
