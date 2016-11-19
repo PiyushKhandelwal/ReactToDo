@@ -8,7 +8,7 @@ module.exports = {
 		root: __dirname,
 		alias :{
 			
-		}
+		},
 		extensions : ['','.js','.jsx']
 	},
 	module:{
