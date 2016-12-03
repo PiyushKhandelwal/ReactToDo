@@ -8,6 +8,16 @@ h1 {
 }
 
 .todo-app-body{
-	max-height : 400px;
+	max-height : 300px;
+	overflow-y: hidden;
+}
+
+.todo-app-body:hover{
+	max-height : 300px;
 	overflow-y: auto;
+}
+
+.list-group-item .checkbox {
+	margin: 0;
+	margin-left: 20px;
 }
