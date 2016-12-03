@@ -21,3 +21,15 @@ h1 {
 	margin: 0;
 	margin-left: 20px;
 }
+
+.checkbox .form-control-feedback{
+	height :17px;
+	line-height: 17px;
+	cursor: pointer;
+	pointer-events: auto;
+}
+ 
+.form-control.has-error{
+	border-color: #a94442;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}

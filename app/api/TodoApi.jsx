@@ -26,7 +26,7 @@ module.exports = {
 		});
 
 		filteredTodoList = filteredTodoList.filter(function(todo){
-			return !searchText || (searchText.length >0 && todo.task.indexOf(searchText) > -1);
+			return !searchText || (searchText.length >0 && todo.task.toLowerCase().indexOf(searchText.toLowerCase()) > -1);
 		});
 
 		// show completed tasks towards end
@@ -58,5 +58,16 @@ module.exports = {
 			return true;
 		}
 		return showCompleted === 'true';
+	},
+
+	setCardName: function(name){
+		if(typeof name === 'string' && name.length>0){
+			localStorage.setItem("cardName", name);
+		}
+	},
+
+	getCardName: function(){
+		var cardName = localStorage.getItem('cardName');
+		return cardName || "TODO";
 	}
 }
