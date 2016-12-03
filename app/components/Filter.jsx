@@ -18,7 +18,7 @@ var Filter = React.createClass({
 					</div>
 					<div className="checkbox">
 						<label>
-							<input type="checkbox" ref="showCompleted" onChange={this.handleFilter}/> Show completed
+							<input type="checkbox" ref="showCompleted" checked={this.props.showCompleted} onChange={this.handleFilter}/> Show completed
 						</label>
 					</div>
 				</form>

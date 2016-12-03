@@ -7,12 +7,15 @@ var TodoApi = require("TodoApi");
 var TodoApp = React.createClass({
 	getInitialState: function(){
 		return {
+			showCompleted: TodoApi.getShowCompleted(),
+			searchText : "",	
 			todoList: TodoApi.getTodoList()
 		}
 	},
 
 	componentDidUpdate: function(prevProps, prevState){
 		TodoApi.setTodoList(this.state.todoList);
+		TodoApi.setFilterCriteria(this.state.showCompleted, this.state.searchText);
 	},
 
 	handleAddTodo: function(todo){
@@ -28,8 +31,11 @@ var TodoApp = React.createClass({
 		});
 	},
 
-	handleFilter: function(){
-
+	handleFilter: function(searchText, showCompleted){
+		this.setState({
+			showCompleted: showCompleted,
+			searchText: searchText
+		});
 	},
 
 	handleToggle: function(id){
@@ -43,6 +49,8 @@ var TodoApp = React.createClass({
 	},
 
 	render : function (){
+		var {showCompleted, searchText, todoList} = this.state;
+		var filtteredTodoList = TodoApi.filterTodoList(todoList, showCompleted, searchText);
 		return (
 			<div className="container todo-app">
 				<div className="panel panel-default">
@@ -50,9 +58,9 @@ var TodoApp = React.createClass({
   					<div className="panel-body">
     					<AddTodo onAddTodo={this.handleAddTodo} />
   					</div>
-    				<TodoList todoList={this.state.todoList} onToggle={this.handleToggle}/>
+    				<TodoList todoList={filtteredTodoList} onToggle={this.handleToggle}/>
     				<div className="panel-footer">
-    					<Filter onfilter={this.handleFilter}/>
+    					<Filter onFilter={this.handleFilter} showCompleted={showCompleted}/>
     				</div>
 				</div>
 			</div>
