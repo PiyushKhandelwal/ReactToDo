@@ -22,10 +22,23 @@ module.exports = {
 		var filteredTodoList = todoList;
 
 		filteredTodoList = filteredTodoList.filter(function(todo){
-			if(todo.completed){
-				return todo.completed === showCompleted;
+			return !todo.completed || showCompleted;
+		});
+
+		filteredTodoList = filteredTodoList.filter(function(todo){
+			return !searchText || (searchText.length >0 && todo.task.indexOf(searchText) > -1);
+		});
+
+		// show completed tasks towards end
+
+		filteredTodoList.sort((a, b) => {
+			if(!a.completed && b.completed){
+				return -1;
+			}else if(a.completed && !b.completed){
+				return 1;
+			}else{
+				return 0;
 			}
-			return true;
 		});
 		return filteredTodoList;
 	},
