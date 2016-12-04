@@ -26045,6 +26045,7 @@
 
 	var React = __webpack_require__(5);
 	var Modal = __webpack_require__(207);
+	var uuid = __webpack_require__(183);
 
 	var _require = __webpack_require__(227),
 	    RIETextArea = _require.RIETextArea;
@@ -26085,6 +26086,22 @@
 				'div',
 				{ style: popover },
 				React.createElement(BlockPicker, { onChangeComplete: this.handleAddLabel })
+			);
+		},
+
+		renderLabels: function renderLabels() {
+			var todo = this.props.todo;
+
+
+			if (!todo.labels.length) return;
+
+			var spanColors = todo.labels.map(function (label) {
+				return React.createElement('span', { key: uuid(), className: 'label custom-label', style: { backgroundColor: label } });
+			});
+			return React.createElement(
+				'div',
+				{ style: { marginBottom: '20px', maxWidth: '250px' } },
+				spanColors
 			);
 		},
 
@@ -26155,6 +26172,7 @@
 								React.createElement(
 									'div',
 									{ className: 'col-lg-10' },
+									this.renderLabels(),
 									React.createElement('i', { className: 'glyphicon glyphicon-edit' }),
 									'\xA0',
 									React.createElement(RIETextArea, { value: todo.desc.length > 0 ? todo.desc : "Add a description...",

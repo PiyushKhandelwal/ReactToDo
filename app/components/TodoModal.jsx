@@ -1,5 +1,6 @@
 var React = require("react");
 var Modal = require('react-modal');
+var uuid = require('node-uuid');
 var {RIETextArea} = require('riek');
 var {BlockPicker} = require('react-color');
 
@@ -27,6 +28,19 @@ var TodoModal = React.createClass({
 			          <BlockPicker onChangeComplete={this.handleAddLabel}/>
 			        </div>);
 	},
+
+	renderLabels: function() {
+		var {todo} = this.props;
+
+		if(!todo.labels.length) return;
+
+		var spanColors = todo.labels.map((label)=>{
+			return <span key={uuid()} className="label custom-label" style={{backgroundColor: label}}></span>
+		});
+		return (<div style={{marginBottom:'20px', maxWidth:'250px'}}>
+			{spanColors}
+		</div>)
+	},
 	
 	render : function (){
 		var {isModalOpen, todo, card, onClose, onSave, onAddDescription} = this.props;
@@ -51,6 +65,7 @@ var TodoModal = React.createClass({
 		            	<div className="container-fluid">
 		            		<div className="row">
 		            			<div className="col-lg-10">
+		            				{this.renderLabels()}
 		            				<i className="glyphicon glyphicon-edit"></i>&nbsp;
 		            				<RIETextArea value={todo.desc.length>0 ? todo.desc :"Add a description..."} 
 		            					classEditing="form-control" 
