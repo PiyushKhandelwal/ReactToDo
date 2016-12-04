@@ -4,7 +4,6 @@ h1 {
 
 .todo-app{
 	margin-top:20px;
-	max-width: 500px;
 }
 
 .todo-app-body{
@@ -32,4 +31,68 @@ h1 {
 .form-control.has-error{
 	border-color: #a94442;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+
+.modal-title h5{
+  margin:0;
+}
+
+.ReactModal__Overlay {
+  -webkit-perspective: 600;
+  perspective: 700;
+  opacity: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+  transition: opacity 150ms ease-out;
+  z-index:10;
+}
+
+.ReactModal__Content {
+  -webkit-transform: scale(0.5) rotateX(-30deg);
+  transform: scale(0.5) rotateX(-30deg);
+}
+
+.ReactModal__Content--after-open {
+  -webkit-transform: scale(1) rotateX(0deg);
+  transform: scale(1) rotateX(0deg);
+  transition: all 150ms ease-in;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
+
+.ReactModal__Content--before-close {
+  -webkit-transform: scale(0.5) rotateX(30deg);
+  transform: scale(0.5) rotateX(30deg);
+  transition: all 150ms ease-in;
+}
+
+.ReactModal__Content.modal-dialog {
+  border: none;
+  background-color: transparent;
+}
+
+.modal-dialog{
+  width: 720px;
+}
+
+.modal-dialog .btn-group-vertical .btn {
+  text-align: left;
+}
+
+.btn i{
+  font-size: 0.8em
+}
+
+span.custom-label, span.custom-label:empty, .label:empty{
+  display: inline-block;
+  width: 40px;
+  height: 8px;
+  margin-right: 4px;
 }

@@ -45,6 +45,5 @@ module.exports = {
 			test:/\.(png|woff|woff2|eot|ttf|svg)$/
 		}
 		]
-	},
-	devtool:"eval-source-map"
+	}
 };

@@ -17,7 +17,7 @@ var AddTodo = React.createClass({
 				<div className="input-group">
 					<input type="text" className="form-control" ref="todotask" placeholder="Enter Task"/>
 					<span className="input-group-btn">
-				        <button className="btn btn-default" type="button">Add!</button>
+				        <button className="btn btn-default" type="button" onClick={this.addTodo}>Add!</button>
 				    </span>
 				</div>
 			</form>

@@ -1,14 +1,14 @@
 var $ = require("jquery");
 module.exports = {
-	setTodoList: function(todoList){
-		if($.isArray(todoList)){
-			localStorage.setItem("todoList", JSON.stringify(todoList));
-			return todoList;
+	setTodoCardList: function(todoCardList){
+		if($.isArray(todoCardList)){
+			localStorage.setItem("todoCardList", JSON.stringify(todoCardList));
+			return todoCardList;
 		}
 	},
 
-	getTodoList: function(){
-		var stringTodoList = localStorage.getItem("todoList");
+	getTodoCardList: function(){
+		var stringTodoList = localStorage.getItem("todoCardList");
 		var todoList = [];
 		try{
 			todoList = JSON.parse(stringTodoList);
@@ -16,6 +16,10 @@ module.exports = {
 
 		}
 		return $.isArray(todoList) ? todoList : [];
+	},
+
+	removeAllCard:function(){
+		localStorage.removeItem("todoCardList");
 	},
 
 	filterTodoList:function(todoList, showCompleted, searchText){

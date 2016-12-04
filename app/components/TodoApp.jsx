@@ -1,101 +1,239 @@
 var React = require("react");
 var uuid = require('node-uuid');
-var {RIEInput} = require('riek');
-
-var TodoList = require("TodoList");
-var AddTodo = require("AddTodo");
-var Filter = require("Filter");
+var TodoModal = require('TodoModal');
 var TodoApi = require("TodoApi");
+var TodoCard = require("TodoCard");
+var Navbar = require("Navbar");
 
 var TodoApp = React.createClass({
+
 	getInitialState: function(){
 		return {
-			cardName: TodoApi.getCardName(),
-			showCompleted: TodoApi.getShowCompleted(),
-			searchText : "",	
-			todoList: TodoApi.getTodoList()
+			dashboard: "Dashboard",
+			todoCardList: TodoApi.getTodoCardList(),
+			modalOpen: "-1",
+			colorPickerOpen: false
 		}
 	},
 
 	componentDidUpdate: function(prevProps, prevState){
-		TodoApi.setTodoList(this.state.todoList);
-		TodoApi.setFilterCriteria(this.state.showCompleted, this.state.searchText);
-		if(this.state.cardName !== prevState.cardName){
-			TodoApi.setCardName(this.state.cardName);
-		}
+		TodoApi.setTodoCardList(this.state.todoCardList);
 	},
 
-	handleAddTodo: function(todo){
+	addCard:function(){
 		this.setState({
-			todoList: [
+			todoCardList : [
 				{
-					id: uuid(),
-					task: todo,
-					completed: false
+					id:uuid(),
+					cardName: "TODO",
+					showCompleted: true,
+					searchText : "",	
+					todoList: []
 				},
-				...this.state.todoList
+				...this.state.todoCardList
 			]
 		});
 	},
 
-	handleFilter: function(searchText, showCompleted){
+	removeAllCard: function(){
 		this.setState({
-			showCompleted: showCompleted,
-			searchText: searchText
+			todoCardList :[]
+		});
+		TodoApi.removeAllCard();
+	},
+
+	handleAddTodo:function(todo, parentId){
+		var updateTodoCards = this.state.todoCardList.map((todoCard) => {
+			if(todoCard.id === parentId) {
+				todoCard.todoList = [
+					{
+						id: uuid(),
+						task: todo,
+						completed: false,
+						labels:[],
+						desc :"",
+						parentId: parentId
+					},
+					...todoCard.todoList
+				]
+			}
+			return todoCard;
+		});
+		this.setState({
+			todoCardList: updateTodoCards
 		});
 	},
 
-	handleToggle: function(id){
-		var updatedTodList = this.state.todoList.map((todo)=>{
-			if(todo.id === id) todo.completed = !todo.completed;
-			return todo;
+	handleFilter:function(searchText, showCompleted, parentId){
+		var updateTodoCards = this.state.todoCardList.map((todoCard) => {
+			if(todoCard.id === parentId) {
+				todoCard.showCompleted =showCompleted;
+				todoCard.searchText = searchText;
+			}
+			return todoCard;
 		});
 		this.setState({
-			todoList : updatedTodList
+			todoCardList: updateTodoCards
+		});		
+	},
+
+	handleDelete : function(parentId, childId){
+		var updateTodoCards = this.state.todoCardList.map((todoCard) => {
+			if(todoCard.id === parentId) {
+				todoCard.todoList = todoCard.todoList.filter((todo)=>{
+					return todo.id !== childId;
+				});
+			}
+			return todoCard;
+		});
+		this.setState({
+			todoCardList: updateTodoCards
+		});	
+	},
+
+	handleEdit : function(data, parentId, childId){
+		var updateTodoCards = this.state.todoCardList.map((todoCard) => {
+			if(todoCard.id === parentId) {
+				todoCard.todoList = todoCard.todoList.map((todo)=>{
+					if(todo.id === childId) todo.task = data.task;
+					return todo;
+				});
+			}
+			return todoCard;
+		});
+		this.setState({
+			todoCardList: updateTodoCards
 		});
 	},
 
-	handleDelete: function(id){
-		var updatedTodList = this.state.todoList.filter((todo)=>{
-			 return todo.id !== id;
+	handleToggle: function(parentId, childId){
+		var updateTodoCards = this.state.todoCardList.map((todoCard) => {
+			if(todoCard.id === parentId) {
+				todoCard.todoList = todoCard.todoList.map((todo)=>{
+					if(todo.id === childId) todo.completed = !todo.completed;
+					return todo;
+				});
+			}
+			return todoCard;
 		});
 		this.setState({
-			todoList : updatedTodList
-		});
-
-	},
-
-	handleEdit: function(data, id){
-		var updatedTodList = this.state.todoList.map((todo)=>{
-			if(todo.id === id) todo.task = data.task;
-			return todo;
-		});
-		this.setState({
-			todoList : updatedTodList
+			todoCardList: updateTodoCards
 		});
 	},
 
-	changeCardName: function(data){
-		data.cardName && this.setState(data);
-	},	
+	handleChangeCardName: function(data, parentId){
+		var updateTodoCards = this.state.todoCardList.map((todoCard) => {
+			if(todoCard.id === parentId) {
+				todoCard.cardName = data.cardName;
+			}
+			return todoCard;
+		});
+		this.setState({
+			todoCardList: updateTodoCards
+		});
+	},
+
+	handleOpenModal: function(parentId, childId){
+		this.setState({
+			modalOpen : parentId +"_&&_" + childId
+		});
+	},
+
+	renderModal: function(){
+		var that =this;
+		if(this.state.modalOpen === "-1") return;
+		var modelId = this.state.modalOpen.split("_&&_");
+		var selectedTodo = undefined;
+		var selectedCard = undefined;
+
+		this.state.todoCardList.map((todoCard) => {
+			if(todoCard.id === modelId[0]) {
+				selectedCard = todoCard;
+				selectedTodo = todoCard.todoList.find((todo)=>{
+					return todo.id === modelId[1];
+				});
+			}
+		});
+
+		var handleModalCloseRequest=function(){
+			that.setState({
+				modalOpen : "-1",
+				colorPickerOpen: false
+			})
+		};
+
+		var handleSaveClicked =function(){
+			that.setState({
+				modalOpen : "-1"
+			})
+		};
+
+		var handleAddDescription = function(description, parentId, childId){
+			var updateCardList = that.state.todoCardList.map((todoCard)=>{
+				if(todoCard.id === parentId){
+					todoCard.todoList = todoCard.todoList.map((todo)=>{
+						if(todo.id === childId) todo.desc = description;
+						return todo;
+					});
+				}
+				return todoCard;
+			});
+
+			that.setState({
+				todoCardList: updateCardList
+			});
+		};
+
+		var handleColorPickerOpen = function(isOpen){
+			that.setState({
+				colorPickerOpen : isOpen
+			});
+		};
+
+		var handleAddLabel = function (label, parentId, childId){
+			var updateCardList = that.state.todoCardList.map((todoCard)=>{
+				if(todoCard.id === parentId){
+					todoCard.todoList = todoCard.todoList.map((todo)=>{
+						if(todo.id === childId && !todo.labels.includes(label)) todo.labels.push(label);
+						return todo;
+					});
+				}
+				return todoCard;
+			});
+
+			that.setState({
+				todoCardList: updateCardList
+			});
+		};
+
+		if(!selectedTodo) return;
+
+		return (
+			<TodoModal isModalOpen={this.state.modalOpen !== "-1"} onClose={handleModalCloseRequest}
+					onAddDescription={handleAddDescription} 
+					onSave={handleSaveClicked} todo={selectedTodo} card={selectedCard} 
+					isColorPickerOpen= {that.state.colorPickerOpen} onOpenColorPicker={handleColorPickerOpen} onAddLabel={handleAddLabel}/>
+		)
+	},
+
+	renderTodoCards:function(){
+		return this.state.todoCardList.map((todocard)=>{
+			return <TodoCard key={todocard.id} {...todocard} onAddTodo={this.handleAddTodo} onFilter={this.handleFilter} 
+						onDelete={this.handleDelete} onEdit={this.handleEdit} onToggle={this.handleToggle}
+						onOpenModal={this.handleOpenModal} onChangeCardName={this.handleChangeCardName}/>
+		});
+	},
 
 	render : function (){
-		var {showCompleted, searchText, todoList, cardName} = this.state;
-		var filtteredTodoList = TodoApi.filterTodoList(todoList, showCompleted, searchText);
 		return (
-			<div className="container todo-app">
-				<div className="panel panel-default">
-					<div className="panel-heading">
-						<RIEInput value={cardName} propName="cardName" change={this.changeCardName}/>
+			<div>
+				<Navbar onAddTodoCard={this.addCard} onRemoveTodoCard ={this.removeAllCard}/>
+				<div className="container-fluid">
+					<div className="row">
+						{this.renderTodoCards()}
 					</div>
-  					<div className="panel-body">
-    					<AddTodo onAddTodo={this.handleAddTodo} />
-  					</div>
-    				<TodoList todoList={filtteredTodoList} onToggle={this.handleToggle} onEdit={this.handleEdit} onDelete={this.handleDelete} />
-    				<div className="panel-footer">
-    					<Filter onFilter={this.handleFilter} showCompleted={showCompleted}/>
-    				</div>
 				</div>
+				{this.renderModal()}
 			</div>
 		);
 	}

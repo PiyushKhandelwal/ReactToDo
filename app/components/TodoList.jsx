@@ -3,10 +3,10 @@ var Todo = require("Todo");
 
 var TodoList = React.createClass({
 	render : function (){
-		var {todoList, onToggle, onEdit, onDelete} = this.props;
+		var {todoList, onToggle, onEdit, onDelete, onOpenModal} = this.props;
 		var renderTodos = function(){
 			return todoList.map((todo)=>{
-				return <Todo key={todo.id} onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} {...todo} />;
+				return <Todo key={todo.id} onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} onOpenModal={onOpenModal} {...todo} />;
 			});
 		};
 
